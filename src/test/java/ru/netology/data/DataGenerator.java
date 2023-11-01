@@ -36,6 +36,20 @@ public class DataGenerator {
         String cvc;
     }
 
+    public enum ScenarioNumberField {
+        EMPTY,
+        CYRILLIC,
+        LATIN,
+        SPECIAL_SYMBOL
+    }
+
+    public enum ScenarioStringField {
+        CYRILLIC,
+        LATIN_LOWERCASE,
+        SPECIAL_SYMBOL,
+        NUMBER
+    }
+
     public static String generateValidDate(String format) {
         return LocalDate.now().plusDays(new Random().nextInt(dayLimit)).format(DateTimeFormatter.ofPattern(format));
     }
@@ -112,48 +126,46 @@ public class DataGenerator {
         );
     }
 
-    public static BuyingData getBuyingDataWithInvalidCardNumber(int index) {  /* 0-пустая, 1-кириллица, 2-латиница, 3-спец. символы */
-        if (index == 0) {
-            return new BuyingData(
-                    generateInvalidEmptyString(),
-                    generateValidDate("MM"),
-                    generateValidDate("yy"),
-                    generateValidName(),
-                    generateValidCVC()
-            );
-        }
-        if (index == 1) {
-            return new BuyingData(
-                    generateInvalidStringRu("?????"),
-                    generateValidDate("MM"),
-                    generateValidDate("yy"),
-                    generateValidName(),
-                    generateValidCVC()
-            );
-        }
-        if (index == 2) {
-            return new BuyingData(
-                    generateInvalidStringEn("?????"),
-                    generateValidDate("MM"),
-                    generateValidDate("yy"),
-                    generateValidName(),
-                    generateValidCVC()
-            );
-        }
-        if (index == 3) {
-            return new BuyingData(
-                    generateInvalidStringEn("!#$#%"),
-                    generateValidDate("MM"),
-                    generateValidDate("yy"),
-                    generateValidName(),
-                    generateValidCVC()
-            );
+    public static BuyingData getBuyingDataWithInvalidCardNumber(ScenarioNumberField scenario) {
+        switch(scenario) {
+            case EMPTY:
+                return new BuyingData(
+                        generateInvalidEmptyString(),
+                        generateValidDate("MM"),
+                        generateValidDate("yy"),
+                        generateValidName(),
+                        generateValidCVC()
+                );
+            case CYRILLIC:
+                return new BuyingData(
+                        generateInvalidStringRu("?????"),
+                        generateValidDate("MM"),
+                        generateValidDate("yy"),
+                        generateValidName(),
+                        generateValidCVC()
+                );
+            case LATIN:
+                return new BuyingData(
+                        generateInvalidStringEn("?????"),
+                        generateValidDate("MM"),
+                        generateValidDate("yy"),
+                        generateValidName(),
+                        generateValidCVC()
+                );
+            case SPECIAL_SYMBOL:
+                return new BuyingData(
+                        generateInvalidStringEn("!%"),
+                        generateValidDate("MM"),
+                        generateValidDate("yy"),
+                        generateValidName(),
+                        generateValidCVC()
+                );
         }
         return null;
     }
 
-    public static BuyingData getBuyingDataWithInvalidNumericMonth(int index) {  /* 0-прошедший месяц этого года, 1-двузначное число >12 */
-        if (index == 0) {
+    public static BuyingData getBuyingDataWithInvalidNumericMonth(boolean isPastMonth) {
+        if (isPastMonth) {
             return new BuyingData(
                     cards.get("approved"),
                     generateInvalidMonthInCurrentYear(),
@@ -172,48 +184,46 @@ public class DataGenerator {
         }
     }
 
-    public static BuyingData getBuyingDataWithInvalidMonth(int index) {  /* 0-пустая, 1-кириллица, 2-латиница, 3-спец. символы */
-        if (index == 0) {
-            return new BuyingData(
-                    cards.get("approved"),
-                    generateInvalidEmptyString(),
-                    generateValidDate("yy"),
-                    generateValidName(),
-                    generateValidCVC()
-            );
-        }
-        if (index == 1) {
-            return new BuyingData(
-                    cards.get("approved"),
-                    generateInvalidStringRu("??"),
-                    generateValidDate("yy"),
-                    generateValidName(),
-                    generateValidCVC()
-            );
-        }
-        if (index == 2) {
-            return new BuyingData(
-                    cards.get("approved"),
-                    generateInvalidStringEn("??"),
-                    generateValidDate("yy"),
-                    generateValidName(),
-                    generateValidCVC()
-            );
-        }
-        if (index == 3) {
-            return new BuyingData(
-                    cards.get("approved"),
-                    generateInvalidStringEn("!%"),
-                    generateValidDate("yy"),
-                    generateValidName(),
-                    generateValidCVC()
-            );
+    public static BuyingData getBuyingDataWithInvalidMonth(ScenarioNumberField scenario) {
+        switch(scenario) {
+            case EMPTY:
+                return new BuyingData(
+                        cards.get("approved"),
+                        generateInvalidEmptyString(),
+                        generateValidDate("yy"),
+                        generateValidName(),
+                        generateValidCVC()
+                );
+            case CYRILLIC:
+                return new BuyingData(
+                        cards.get("approved"),
+                        generateInvalidStringRu("??"),
+                        generateValidDate("yy"),
+                        generateValidName(),
+                        generateValidCVC()
+                );
+            case LATIN:
+                return new BuyingData(
+                        cards.get("approved"),
+                        generateInvalidStringEn("??"),
+                        generateValidDate("yy"),
+                        generateValidName(),
+                        generateValidCVC()
+                );
+            case SPECIAL_SYMBOL:
+                return new BuyingData(
+                        cards.get("approved"),
+                        generateInvalidStringEn("!%"),
+                        generateValidDate("yy"),
+                        generateValidName(),
+                        generateValidCVC()
+                );
         }
         return null;
     }
 
-    public static BuyingData getBuyingDataWithInvalidNumericYear(int index) { /* 0-прошедший год, не0-год, дальше, чем на 5 лет вперед */
-        if (index == 0) {
+    public static BuyingData getBuyingDataWithInvalidNumericYear(boolean isPastYear) {
+        if (isPastYear) {
             return new BuyingData(
                     cards.get("approved"),
                     generateValidDate("MM"),
@@ -232,42 +242,40 @@ public class DataGenerator {
         }
     }
 
-    public static BuyingData getBuyingDataWithInvalidYear(int index) {   /* 0-пустая, 1-кириллица, 2-латиница, 3-спец. символы */
-        if (index == 0) {
-            return new BuyingData(
-                    cards.get("approved"),
-                    generateValidDate("MM"),
-                    generateInvalidEmptyString(),
-                    generateValidName(),
-                    generateValidCVC()
-            );
-        }
-        if (index == 1) {
-            return new BuyingData(
-                    cards.get("approved"),
-                    generateValidDate("MM"),
-                    generateInvalidStringRu("??"),
-                    generateValidName(),
-                    generateValidCVC()
-            );
-        }
-        if (index == 2) {
-            return new BuyingData(
-                    cards.get("approved"),
-                    generateValidDate("MM"),
-                    generateInvalidStringEn("??"),
-                    generateValidName(),
-                    generateValidCVC()
-            );
-        }
-        if (index == 3) {
-            return new BuyingData(
-                    cards.get("approved"),
-                    generateValidDate("MM"),
-                    generateInvalidStringEn("!%"),
-                    generateValidName(),
-                    generateValidCVC()
-            );
+    public static BuyingData getBuyingDataWithInvalidYear(ScenarioNumberField scenario) {
+        switch(scenario) {
+            case EMPTY:
+                return new BuyingData(
+                        cards.get("approved"),
+                        generateValidDate("MM"),
+                        generateInvalidEmptyString(),
+                        generateValidName(),
+                        generateValidCVC()
+                );
+            case CYRILLIC:
+                return new BuyingData(
+                        cards.get("approved"),
+                        generateValidDate("MM"),
+                        generateInvalidStringRu("??"),
+                        generateValidName(),
+                        generateValidCVC()
+                );
+            case LATIN:
+                return new BuyingData(
+                        cards.get("approved"),
+                        generateValidDate("MM"),
+                        generateInvalidStringEn("??"),
+                        generateValidName(),
+                        generateValidCVC()
+                );
+            case SPECIAL_SYMBOL:
+                return new BuyingData(
+                        cards.get("approved"),
+                        generateValidDate("MM"),
+                        generateInvalidStringEn("!%"),
+                        generateValidName(),
+                        generateValidCVC()
+                );
         }
         return null;
     }
@@ -281,82 +289,78 @@ public class DataGenerator {
         );
     }
 
-    public static BuyingData getBuyingDataWithInvalidName(int index) { /* 0-кириллица, 1-строчная латиница, 2-спец. символы, 3-цифры */
-        if (index == 0) {
-            return new BuyingData(
-                    cards.get("approved"),
-                    generateValidDate("MM"),
-                    generateValidDate("yy"),
-                    generateInvalidNameRu(),
-                    generateValidCVC()
-            );
-        }
-        if (index == 1) {
-            return new BuyingData(
-                    cards.get("approved"),
-                    generateValidDate("MM"),
-                    generateValidDate("yy"),
-                    generateInvalidNameEnSmall(),
-                    generateValidCVC()
-            );
-        }
-        if (index == 2) {
-            return new BuyingData(
-                    cards.get("approved"),
-                    generateValidDate("MM"),
-                    generateValidDate("yy"),
-                    generateInvalidStringEn("!%"),
-                    generateValidCVC()
-            );
-        }
-        if (index == 3) {
-            return new BuyingData(
-                    cards.get("approved"),
-                    generateValidDate("MM"),
-                    generateValidDate("yy"),
-                    generateInvalidStringEn("#####"),
-                    generateValidCVC()
-            );
+    public static BuyingData getBuyingDataWithInvalidName(ScenarioStringField scenario) {
+        switch (scenario) {
+            case CYRILLIC:
+                return new BuyingData(
+                        cards.get("approved"),
+                        generateValidDate("MM"),
+                        generateValidDate("yy"),
+                        generateInvalidNameRu(),
+                        generateValidCVC()
+                );
+            case LATIN_LOWERCASE:
+                return new BuyingData(
+                        cards.get("approved"),
+                        generateValidDate("MM"),
+                        generateValidDate("yy"),
+                        generateInvalidNameEnSmall(),
+                        generateValidCVC()
+                );
+            case SPECIAL_SYMBOL:
+                return new BuyingData(
+                        cards.get("approved"),
+                        generateValidDate("MM"),
+                        generateValidDate("yy"),
+                        generateInvalidStringEn("!%"),
+                        generateValidCVC()
+                );
+            case NUMBER:
+                return new BuyingData(
+                        cards.get("approved"),
+                        generateValidDate("MM"),
+                        generateValidDate("yy"),
+                        generateInvalidStringEn("#####"),
+                        generateValidCVC()
+                );
         }
         return null;
     }
 
-    public static BuyingData getBuyingDataWithInvalidCVC(int index) { /* 0-пустая, 1-кириллица, 2-латиница, 3-спец. символы */
-        if (index == 0) {
-            return new BuyingData(
-                    cards.get("approved"),
-                    generateValidDate("MM"),
-                    generateValidDate("yy"),
-                    generateValidName(),
-                    generateInvalidEmptyString()
-            );
-        }
-        if (index == 1) {
-            return new BuyingData(
-                    cards.get("approved"),
-                    generateValidDate("MM"),
-                    generateValidDate("yy"),
-                    generateValidName(),
-                    generateInvalidStringRu("??")
-            );
-        }
-        if (index == 2) {
-            return new BuyingData(
-                    cards.get("approved"),
-                    generateValidDate("MM"),
-                    generateValidDate("yy"),
-                    generateValidName(),
-                    generateInvalidStringEn("??")
-            );
-        }
-        if (index == 3) {
-            return new BuyingData(
-                    cards.get("approved"),
-                    generateValidDate("MM"),
-                    generateValidDate("yy"),
-                    generateValidName(),
-                    generateInvalidStringEn("!%")
-            );
+    public static BuyingData getBuyingDataWithInvalidCVC(ScenarioNumberField scenario) {
+        switch (scenario) {
+            case EMPTY:
+                return new BuyingData(
+                        cards.get("approved"),
+                        generateValidDate("MM"),
+                        generateValidDate("yy"),
+                        generateValidName(),
+                        generateInvalidEmptyString()
+                );
+            case CYRILLIC:
+                return new BuyingData(
+                        cards.get("approved"),
+                        generateValidDate("MM"),
+                        generateValidDate("yy"),
+                        generateValidName(),
+                        generateInvalidStringRu("??")
+                );
+            case LATIN:
+                return new BuyingData(
+                        cards.get("approved"),
+                        generateValidDate("MM"),
+                        generateValidDate("yy"),
+                        generateValidName(),
+                        generateInvalidStringEn("??")
+                );
+            case SPECIAL_SYMBOL:
+                return new BuyingData(
+                        cards.get("approved"),
+                        generateValidDate("MM"),
+                        generateValidDate("yy"),
+                        generateValidName(),
+                        generateInvalidStringEn("!%")
+                );
         }
         return null;
     }
