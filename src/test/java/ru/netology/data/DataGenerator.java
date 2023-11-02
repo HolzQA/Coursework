@@ -1,8 +1,6 @@
 package ru.netology.data;
 
 import com.github.javafaker.Faker;
-import jdk.jfr.DataAmount;
-import lombok.Data;
 import lombok.Value;
 
 import java.text.DecimalFormat;
@@ -29,7 +27,7 @@ public class DataGenerator {
         cards.put("declined", "5555 6666 7777 8888");
     }
 
-//    @Data
+
     @Value
     public static class BuyingData {
         String cardNumber;
