@@ -18,10 +18,10 @@ public class BuyingTicketTest {
         buyingTicketPage = open("http://localhost:8080", BuyingTicketPage.class);
     }
 
-//    @AfterAll
-//    static void cleanAll() {
-//        cleanDatabase();
-//    }
+    @AfterAll
+    static void cleanAll() {
+        cleanDatabase();
+    }
 
 
     @DisplayName("Should successfully buying with approved card and refusal with declined card")
